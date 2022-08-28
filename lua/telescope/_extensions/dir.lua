@@ -6,6 +6,6 @@ if not has_telescope then
 end
 
 return telescope.register_extension({
-	-- setup = dir.setup,
+	setup = dir.setup,
 	exports = { dir = dir.dir },
 })
