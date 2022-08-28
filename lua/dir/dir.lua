@@ -1,26 +1,31 @@
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local conf = require("telescope.config").values
-local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
 
 local M = {}
+local dir_maker
+local setup_config
+
+M.setup = function(config)
+	setup_config = config
+	dir_maker = function(entry)
+		local path_remove = function(String)
+			return string.gsub(String, setup_config.dir_path .. "/", "")
+		end
+		local disp = path_remove(entry)
+		return { value = entry, display = disp, ordinal = disp }
+	end
+end
 
 M.dir = function(opts)
 	opts = opts or {}
-	local input = { "fd", ".", "/home/yorek/.config/nvim", "--type", "f", "" }
+	local input = { "fd", ".", setup_config.dir_path, "--type", "f", "" }
 	pickers.new(opts, {
-		prompt_title = "Configs",
-		finder = finders.new_oneshot_job(input),
+		prompt_title = "Search Files",
+		result_title = "Neovim Config Files",
+		finder = finders.new_oneshot_job(input, { entry_maker = dir_maker }),
 		sorter = conf.generic_sorter(opts),
-		entry_maker = function(entry)
-			return {
-				value = entry,
-				display = entry[2],
-				ordinal = entry[1],
-			}
-		end,
-	}):find(require("telescope.themes").get_dropdown({}))
+	}):find()
 end
 
 return M
