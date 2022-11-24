@@ -19,10 +19,9 @@ end
 
 M.dir = function(opts)
 	opts = opts or {}
-	local input = { "fd", ".", setup_config.dir_path, "--type", "f", "" }
+	local input = { "fd", "--type", "f", ".", setup_config.dir_path }
 	pickers.new(opts, {
-		prompt_title = "Search Files",
-		result_title = "Neovim Config Files",
+		prompt_title = "Neovim Config Files",
 		finder = finders.new_oneshot_job(input, { entry_maker = dir_maker }),
 		sorter = conf.generic_sorter(opts),
 	}):find()
